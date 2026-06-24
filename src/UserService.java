@@ -9,10 +9,11 @@ public class UserService {
 
     public void cadastraUsuario() {
         System.out.println("Digite o cpf do usuário:");
-        String cpf = scanner.nextLine();
-        while (!UserValidator.isValidCpf(cpf, users)) {
-            System.out.println("Digite o cpf do usuário:");
-            cpf = scanner.nextLine();
+        String cpfString = scanner.nextLine();
+        Cpf cpf = new Cpf(cpfString);
+        if (isCpfRegistered(cpf.getCpf())) {
+            System.out.println("CPF já cadastrado, tente novamente.");
+            return;
         }
 
         System.out.println("Digite o nome do usuário:");
@@ -20,10 +21,6 @@ public class UserService {
 
         System.out.println("Digite a idade do usuário");
         int age = Integer.parseInt(scanner.nextLine());
-        while (!UserValidator.isValidAge(age)) {
-            System.out.println("Digite a idade do usuário");
-            age = Integer.parseInt(scanner.nextLine());
-        }
 
         System.out.println("Digite a profissão do usuário");
         String work = scanner.nextLine();
@@ -135,21 +132,13 @@ public class UserService {
     public void alterarIdade(User user) {
         System.out.println("Digite a nova idade do usuário:");
         int age = Integer.parseInt(scanner.nextLine());
-        while (!UserValidator.isValidAge(age)) {
-            System.out.println("Digite a nova idade do usuário:");
-            age = Integer.parseInt(scanner.nextLine());
-        }
         user.setAge(age);
     }
 
     public void alterarCpf(User user) {
         System.out.println("Digite o novo CPF do usuário:");
         String cpf = scanner.nextLine();
-        while (!UserValidator.isValidCpf(cpf, users)) {
-            System.out.println("Digite o novo CPF do usuário:");
-            cpf = scanner.nextLine();
-        }
-        user.setCpf(cpf);
+        user.getCpf().setCpf(cpf);
     }
 
     public void alterarNome(User user) {
@@ -159,7 +148,11 @@ public class UserService {
     }
 
     public User buscarUsuarioPorCpf(String cpf) {
-        return users.stream().filter(u -> cpf.equals(u.getCpf()))
+        return users.stream().filter(u -> u.hasCpf(cpf))
                 .findFirst().orElse(null);
+    }
+
+    public boolean isCpfRegistered(String cpf) {
+        return users.stream().anyMatch(u -> u.hasCpf(cpf));
     }
 }

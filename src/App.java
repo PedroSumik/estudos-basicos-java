@@ -17,7 +17,14 @@ public class App {
             int scan = Integer.parseInt(scanner.nextLine());
             switch (scan) {
                 case 1:
-                    userService.cadastraUsuario();
+                    while (true) {
+                        try {
+                            userService.cadastraUsuario();
+                            break;
+                        } catch (IllegalArgumentException e) {
+                            System.out.println(e.getMessage());
+                        }
+                    }
                     break;
                 case 2:
                     userService.mostrarUsuario();
