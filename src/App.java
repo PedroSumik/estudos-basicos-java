@@ -19,7 +19,7 @@ public class App {
                 case 1:
                     while (true) {
                         try {
-                            userService.cadastraUsuario();
+                            userService.addUser();
                             break;
                         } catch (IllegalArgumentException e) {
                             System.out.println(e.getMessage());
@@ -27,16 +27,32 @@ public class App {
                     }
                     break;
                 case 2:
-                    userService.mostrarUsuario();
+                    try {
+                        userService.showUser();
+                    } catch (IllegalArgumentException e) {
+                        System.out.println(e.getMessage());
+                    }
                     break;
                 case 3:
-                    userService.mostrarUsuarios();
+                    try {
+                        userService.showUsers();
+                    } catch (Exception e) {
+                        System.out.println(e.getMessage());
+                    }
                     break;
                 case 4:
-                    userService.removerUsuario();
+                    try {
+                        userService.removeUser();
+                    } catch (Exception e) {
+                        System.out.println(e.getMessage());
+                    }
                     break;
                 case 5:
-                    userService.alterarUsuario();
+                    try {
+                        userService.updateUser();
+                    } catch (Exception e) {
+                        System.out.println(e.getMessage());
+                    }
                     break;
                 case 6:
                     System.out.println("Saindo...");

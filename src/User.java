@@ -9,13 +9,10 @@ public class User {
     public User(Cpf cpf, String name, int age, String work) {
         this.cpf = cpf;
         this.name = name;
-        if (!isAgeValid(age)) {
-            throw new IllegalArgumentException("Idade inválida, usuário deve ser maior que 13 anos");
-        }
+        validateAge(age);
         this.age = age;
         this.work = work;
-        id = idCounter;
-        User.idCounter++;
+        id = idCounter++;
     }
 
     public int getId() {
@@ -23,9 +20,7 @@ public class User {
     }
 
     public void setAge(int age) {
-        if (!isAgeValid(age)) {
-            throw new IllegalArgumentException("Idade inválida, usuário deve ser maior que 13 anos");
-        }
+        validateAge(age);
         this.age = age;
     }
 
@@ -53,20 +48,24 @@ public class User {
         return this.cpf;
     }
 
-    public boolean hasCpf(String cpf) {
-        return this.cpf.getCpf().equals(cpf);
+    public boolean hasCpf(Cpf searchCpf) {
+        return this.cpf.equals(searchCpf);
     }
 
-    public boolean isAgeValid(int age) {
+    public void setCpf(Cpf newCpf) {
+        this.cpf = newCpf;
+    }
+
+    private void validateAge(int age) {
         if (age <= 13 || age >= 120) {
-            return false;
+            throw new IllegalArgumentException(
+                    "Idade inválida, usuário deve ser maior que 13 anos e menor que 120 anos");
         }
-        return true;
     }
 
     @Override
     public String toString() {
-        return "Id: " + this.id + "\nNome: " + name + "\n" + cpf + "\nIdade: " + age + "\nProfissão: "
-                + work;
+        return "\nId: " + this.id + "\nNome: " + name + "\n" + cpf + "\nIdade: " + age + "\nProfissão: "
+                + work + "\n";
     }
 }

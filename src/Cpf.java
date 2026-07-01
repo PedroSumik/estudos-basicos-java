@@ -2,10 +2,9 @@ public class Cpf {
     private String cpf;
 
     public Cpf(String cpf) {
-        if (!isValidCpf(cpf)) {
-            throw new IllegalArgumentException("CPF inválido");
-        }
-        this.cpf = cpf;
+        String normalized = normalizeCpf(cpf);
+        validateCpf(normalized);
+        this.cpf = normalized;
     }
 
     public String getCpf() {
@@ -13,23 +12,34 @@ public class Cpf {
     }
 
     public void setCpf(String cpf) {
-        if (!isValidCpf(cpf)) {
-            throw new IllegalArgumentException("CPF inválido");
-        }
-        this.cpf = cpf;
+        String normalized = normalizeCpf(cpf);
+        validateCpf(normalized);
+        this.cpf = normalized;
     }
 
-    private boolean isValidCpf(String cpf) {
-        String normalized = cpf.replace(".", "").replace("-", "");
-        if (!normalized.matches("\\d{11}")) {
-            return false;
+    private void validateCpf(String cpf) {
+        if (!cpf.matches("\\d{11}")) {
+            throw new IllegalArgumentException("CPF inválido");
         }
+    }
 
-        return true;
+    private String normalizeCpf(String cpf) {
+        return cpf.replace(".", "").replace("-", "");
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null || getClass() != obj.getClass())
+            return false;
+        Cpf other = (Cpf) obj;
+        return cpf.equals(other.cpf);
     }
 
     @Override
     public String toString() {
-        return "CPF: " + cpf;
+        return String.format("CPF: %s.%s.%s-%s", cpf.substring(0, 3), cpf.substring(3, 6), cpf.substring(6, 9),
+                cpf.substring(9, 11));
     }
 }

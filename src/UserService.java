@@ -1,19 +1,18 @@
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 public class UserService {
 
     Scanner scanner = new Scanner(System.in);
-    List<User> users = new ArrayList<>();
+    UserRepository userRepository = new UserRepository();
 
-    public void cadastraUsuario() {
+    public void addUser() {
         System.out.println("Digite o cpf do usuário:");
-        String cpfString = scanner.nextLine();
-        Cpf cpf = new Cpf(cpfString);
-        if (isCpfRegistered(cpf.getCpf())) {
-            System.out.println("CPF já cadastrado, tente novamente.");
-            return;
+        String cpfInput = scanner.nextLine();
+        Cpf cpf = new Cpf(cpfInput);
+
+        if (userRepository.isCpfRegistered(cpf)) {
+            throw new IllegalArgumentException("CPF já cadastrado");
         }
 
         System.out.println("Digite o nome do usuário:");
@@ -25,72 +24,61 @@ public class UserService {
         System.out.println("Digite a profissão do usuário");
         String work = scanner.nextLine();
 
-        users.add(new User(cpf, name, age, work));
+        userRepository.addUser(new User(cpf, name, age, work));
         System.out.println("Usuário cadastrado com sucesso!");
     }
 
-    public void mostrarUsuario() {
-        if (users.isEmpty()) {
-            System.out.println("---------------------");
-            System.out.println("Nenhum usuário cadastrado.");
-            System.out.println("---------------------");
+    public void showUser() {
+        if (emptyList())
             return;
-        }
         System.out.println("Digite o CPF do usuário que deseja mostrar:");
-        String cpfFiltrado = scanner.nextLine();
-        User userFound = buscarUsuarioPorCpf(cpfFiltrado);
+        String filteredCpf = scanner.nextLine();
+        Cpf cpf = new Cpf(filteredCpf);
+        User userFound = userRepository.findUserByCpf(cpf);
 
         if (userFound == null) {
-            System.out.println("Usuário não encontrado.");
+            System.out.println("---------------------\nNenhum usuário cadastrado.\n---------------------");
             return;
         }
         System.out.println(userFound);
     }
 
-    public void mostrarUsuarios() {
-        if (users.isEmpty()) {
-            System.out.println("---------------------");
-            System.out.println("Nenhum usuário cadastrado.");
-            System.out.println("---------------------");
+    public void showUsers() {
+        if (emptyList())
             return;
-        }
+
+        List<User> users = userRepository.getUsers();
         users.forEach(u -> {
-            System.out.println("\n");
             System.out.println(u);
-            System.out.println("-------------------");
         });
     }
 
-    public void removerUsuario() {
-        if (users.isEmpty()) {
-            System.out.println("---------------------");
-            System.out.println("Nenhum usuário cadastrado.");
-            System.out.println("---------------------");
+    public void removeUser() {
+        if (emptyList())
             return;
-        }
         System.out.println("Digite o CPF do usuário que deseja remover:");
-        String cpfFiltrado = scanner.nextLine();
-        User userFound = buscarUsuarioPorCpf(cpfFiltrado);
+        String filteredCpf = scanner.nextLine();
+        Cpf cpf = new Cpf(filteredCpf);
+        User userFound = userRepository.findUserByCpf(cpf);
 
         if (userFound == null) {
-            System.out.println("Usuário não encontrado.");
+            System.out.println("---------------------\nNenhum usuário cadastrado.\n---------------------");
             return;
         }
-        users.remove(userFound);
+        userRepository.removeUser(userFound);
         System.out.println("Usuário removido com sucesso!");
     }
 
-    public void alterarUsuario() {
-        if (users.isEmpty()) {
-            System.out.println("Nenhum usuário cadastrado.");
+    public void updateUser() {
+        if (emptyList())
             return;
-        }
         System.out.println("Digite o CPF do usuário que deseja alterar:");
-        String cpfFiltrado = scanner.nextLine();
-        User userFound = buscarUsuarioPorCpf(cpfFiltrado);
+        String filteredCpf = scanner.nextLine();
+        Cpf cpf = new Cpf(filteredCpf);
+        User userFound = userRepository.findUserByCpf(cpf);
 
         if (userFound == null) {
-            System.out.println("Usuário não encontrado.");
+            System.out.println("---------------------\nNenhum usuário cadastrado.\n---------------------");
             return;
         }
         System.out.println("O que deseja alterar?");
@@ -99,19 +87,19 @@ public class UserService {
         System.out.println("3 - Idade");
         System.out.println("4 - Profissão");
         System.out.println("5 - Voltar");
-        int opcao = Integer.parseInt(scanner.nextLine());
-        switch (opcao) {
+        int option = Integer.parseInt(scanner.nextLine());
+        switch (option) {
             case 1:
-                alterarNome(userFound);
+                updateName(userFound);
                 break;
             case 2:
-                alterarCpf(userFound);
+                updateCpf(userFound);
                 break;
             case 3:
-                alterarIdade(userFound);
+                updateAge(userFound);
                 break;
             case 4:
-                alterarProfissao(userFound);
+                updateWork(userFound);
                 break;
             case 5:
                 break;
@@ -123,36 +111,40 @@ public class UserService {
 
     }
 
-    public void alterarProfissao(User user) {
+    public void updateWork(User user) {
         System.out.println("Digite a nova profissão do usuário:");
         String work = scanner.nextLine();
         user.setWork(work);
     }
 
-    public void alterarIdade(User user) {
+    public void updateAge(User user) {
         System.out.println("Digite a nova idade do usuário:");
         int age = Integer.parseInt(scanner.nextLine());
         user.setAge(age);
     }
 
-    public void alterarCpf(User user) {
+    public void updateCpf(User user) {
         System.out.println("Digite o novo CPF do usuário:");
-        String cpf = scanner.nextLine();
-        user.getCpf().setCpf(cpf);
+        String cpfFiltrado = scanner.nextLine();
+        Cpf cpf = new Cpf(cpfFiltrado);
+        if (userRepository.isCpfRegistered(cpf)) {
+            throw new IllegalArgumentException("CPF já cadastrado");
+        }
+
+        user.setCpf(cpf);
     }
 
-    public void alterarNome(User user) {
+    public void updateName(User user) {
         System.out.println("Digite o novo nome do usuário:");
         String name = scanner.nextLine();
         user.setName(name);
     }
 
-    public User buscarUsuarioPorCpf(String cpf) {
-        return users.stream().filter(u -> u.hasCpf(cpf))
-                .findFirst().orElse(null);
-    }
-
-    public boolean isCpfRegistered(String cpf) {
-        return users.stream().anyMatch(u -> u.hasCpf(cpf));
+    private boolean emptyList() {
+        if (userRepository.getUsers().isEmpty()) {
+            System.out.println("---------------------\nNenhum usuário cadastrado.\n---------------------");
+            return true;
+        }
+        return false;
     }
 }
