@@ -1,5 +1,10 @@
+package service;
 import java.util.List;
 import java.util.Scanner;
+
+import entity.Cpf;
+import entity.User;
+import repository.UserRepository;
 
 public class UserServiceImpl implements UserService {
 

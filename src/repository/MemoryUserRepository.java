@@ -1,5 +1,9 @@
+package repository;
 import java.util.ArrayList;
 import java.util.List;
+
+import entity.Cpf;
+import entity.User;
 
 public class MemoryUserRepository implements UserRepository {
     List<User> users = new ArrayList<>();

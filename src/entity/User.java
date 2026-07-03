@@ -1,3 +1,4 @@
+package entity;
 public class User {
     private static int idCounter = 1;
     private int id;

@@ -1,4 +1,8 @@
+package repository;
 import java.util.List;
+
+import entity.Cpf;
+import entity.User;
 
 public interface UserRepository {
     public void addUser(User user);
